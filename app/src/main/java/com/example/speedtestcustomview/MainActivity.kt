@@ -26,18 +26,7 @@ class MainActivity : AppCompatActivity() {
         MainScope().launch {
             while (count < 100) {
                 delay(100)
-
-//                if (count / 10 == 0) {
-//                    line_demo.progress = 0f
-//                } else {
-
-                    line_demo.progress = count.toFloat()
-//                }
-
-//                if (count > 30) {
-//                    line_demo.layoutParams.height = 1000
-//                    line_demo.requestLayout()
-//                }
+                line_demo.progress = count.toFloat()
                 count++
             }
             while (count2 < 100) {
@@ -46,26 +35,26 @@ class MainActivity : AppCompatActivity() {
                 count2++
             }
         }
-        startAnimation(80,100)
+        startAnimation(80, 100)
 
     }
 
-    private fun startAnimation(oldValue : Int, endValue: Int) {
+    private fun startAnimation(oldValue: Int, endValue: Int) {
         valueAnimator?.cancel()
         valueAnimator = ValueAnimator().apply {
             setIntValues(oldValue, endValue)
             addUpdateListener { animation ->
                 val valueAnimator: Int = animation.animatedValue as Int
-                Log.d("abc","$valueAnimator")
+                Log.d("abc", "$valueAnimator")
             }
             doOnEnd {
-                startAnimation(100,50)
+                startAnimation(100, 50)
                 end = true
             }
-            if (end){
+            if (end) {
                 interpolator = AccelerateInterpolator()
-            }else{
-                interpolator =  AccelerateDecelerateInterpolator()
+            } else {
+                interpolator = AccelerateDecelerateInterpolator()
             }
             duration = 2000
 
@@ -76,7 +65,6 @@ class MainActivity : AppCompatActivity() {
 //                cyclerValue = (oldValue - endValue).toFloat()
 //            }
         }
-        if (!end)
-        valueAnimator?.start()
+        if (!end) valueAnimator?.start()
     }
 }
