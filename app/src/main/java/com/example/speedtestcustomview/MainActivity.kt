@@ -12,21 +12,20 @@ import kotlinx.coroutines.*
 import java.util.*
 
 class MainActivity : AppCompatActivity() {
-    private var valueAnimator: ValueAnimator? = null
-    var end = false
-
-    //    val speedData : SpeedData
+    val random = Random()
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
-        val random = Random()
-
-
         MainScope().launch {
             for (i in 1 until 100) {
                 Log.d("TAG", "onCreate: random ${random.nextFloat()}")
-                delay(100)
+                if (i < 50) {
+                    delay(100)
+
+                } else {
+                    delay(40)
+                }
 
                 val speedData = SpeedData()
 
@@ -64,7 +63,7 @@ class MainActivity : AppCompatActivity() {
                     speedData.speed = 9
                 }
                 if (i > 90) {
-                    speedData.speed = random.nextInt(10-9+1)+9
+                    speedData.speed = random.nextInt(10 - 9 + 1) + 9
 //                    speedData.speed = 10
                 }
 
@@ -113,7 +112,7 @@ class MainActivity : AppCompatActivity() {
 //                    speedData.speed = 9
                 }
                 if (i > 90) {
-                    speedData.speed = random.nextInt(10-9+1)+9
+                    speedData.speed = random.nextInt(10 - 9 + 1) + 9
 //                    speedData.speed = 10
                 }
 
@@ -121,36 +120,7 @@ class MainActivity : AppCompatActivity() {
                 line_demo.setSpeedUpload(speedData)
                 Log.d("TAG", "onCreate: speedData : ${speedData}")
             }
-
         }
     }
 
-    private fun startAnimation(oldValue: Int, endValue: Int) {
-        valueAnimator?.cancel()
-        valueAnimator = ValueAnimator().apply {
-            setIntValues(oldValue, endValue)
-            addUpdateListener { animation ->
-                val valueAnimator: Int = animation.animatedValue as Int
-                Log.d("abc", "$valueAnimator")
-            }
-            doOnEnd {
-                startAnimation(100, 50)
-                end = true
-            }
-            if (end) {
-                interpolator = AccelerateInterpolator()
-            } else {
-                interpolator = AccelerateDecelerateInterpolator()
-            }
-            duration = 2000
-
-//            var cyclerValue = 0f
-//            if (endValue > oldValue){
-//                cyclerValue = (endValue - oldValue).toFloat()
-//            }else{
-//                cyclerValue = (oldValue - endValue).toFloat()
-//            }
-        }
-        if (!end) valueAnimator?.start()
-    }
 }
