@@ -3,88 +3,145 @@ package com.example.speedtestcustomview
 import android.content.Context
 import android.graphics.*
 import android.util.AttributeSet
-import android.util.Log
 import android.view.View
-import java.util.*
-import java.util.jar.Attributes
+import kotlin.collections.ArrayList
 
 class SpeedTest @JvmOverloads constructor(context: Context, attrs: AttributeSet? = null, defStyleAttr: Int = 0) : View(context, attrs, defStyleAttr) {
 
 
     private val lineWidth = 4f
-    private val lineWidth1 = 2f
-    private val lineRectf = RectF()
-    private val path = Path()
-    private val path2 = Path()
+    private val lineWidthEnd = 1f
+    private val pathDownload = Path()
+    private val pathUpload = Path()
 
-    val random = Random(100)
-    var newY = 0f
-    var newY2 = 0f
+    var maxSpeedDownload = -1
+    var isMaxStatusDownload = false
+
+    var maxSpeedUpload = -1
+    var isMaxStatusUpload = false
+
+    var middlePointAbove = PointF()
+    var middlePointUnder = PointF()
+    var newPoint = PointF(0f, height.toFloat())
+    var prevPoint = PointF(0f, height.toFloat())
+    val arrSpeedDownload: ArrayList<SpeedData>
+    val arrSpeedUpload: ArrayList<SpeedData>
 
     init {
-        path.moveTo(100f, 100f)
-        path2.moveTo(100f, 100f)
+        arrSpeedDownload = ArrayList()
+        arrSpeedUpload = ArrayList()
+
+        pathDownload.moveTo(newPoint.x, newPoint.y)
     }
 
     val TAG = "123"
-    private val linePaint = Paint().apply {
-        color = Color.RED
+    private val linePaintDownload = Paint().apply {
+
+        color = Color.parseColor("#FFA723")
         style = Paint.Style.STROKE
         strokeWidth = lineWidth
         isAntiAlias = true
     }
 
-    private val linePaint1 = Paint().apply {
-        color = Color.RED
+    private val linePaintDownloadEnd = Paint().apply {
+        color = Color.parseColor("#FFA723")
         style = Paint.Style.STROKE
-        strokeWidth = lineWidth1
+        strokeWidth = lineWidthEnd
         isAntiAlias = true
     }
 
-    private val linePaint2 = Paint().apply {
-        color = Color.GREEN
+    private val linePaintUpload = Paint().apply {
+
+        color = Color.parseColor("#5EC7D3")
         style = Paint.Style.STROKE
         strokeWidth = lineWidth
         isAntiAlias = true
     }
-    private val linePaint3 = Paint().apply {
-        color = Color.GREEN
+
+    private val linePaintUploadEnd = Paint().apply {
+        color = Color.parseColor("#5EC7D3")
         style = Paint.Style.STROKE
-        strokeWidth = lineWidth1
+        strokeWidth = lineWidthEnd
         isAntiAlias = true
     }
 
-    var progress: Float = 0f
-        set(value) {
-            field = value
-            Log.d(TAG, "x1 : $width/100")
-            newY = 100f + random.nextFloat() * height /2
-            path.lineTo(100f + progress * width / 100, newY)
-            invalidate()
+
+    fun setSpeedDownload(speedData: SpeedData) {
+        arrSpeedDownload.add(speedData)
+        maxSpeedDownload = setMaxSpeedDownload(speedData.speed)
+
+        if (isMaxStatusDownload) {
+            pathDownload.reset()
+            newPoint = PointF(0f, height.toFloat())
+            prevPoint = PointF(0f, height.toFloat())
+            pathDownload.moveTo(newPoint.x, newPoint.y)
+            for (item in arrSpeedDownload) {
+                setUpDownload(item)
+            }
+            isMaxStatusDownload = false
+        } else {
+            setUpDownload(speedData)
         }
-    var progress2: Float = 0f
-        set(value) {
-            field = value
-            newY2 = 100f + random.nextFloat() * height / 25
-            path2.lineTo(100f + progress2 * width / 100, newY2)
-            invalidate()
+    }
+
+    fun setUpDownload(speedData: SpeedData) {
+        prevPoint = newPoint
+        newPoint = PointF(speedData.percent * width / 100, height - (speedData.speed * height / maxSpeedDownload).toFloat())
+        middlePointUnder = PointF((prevPoint.x + newPoint.x) / 2, prevPoint.y)
+        middlePointAbove = PointF((prevPoint.x + newPoint.x) / 2, newPoint.y)
+        pathDownload.cubicTo(middlePointUnder.x, middlePointUnder.y, middlePointAbove.x, middlePointAbove.y, newPoint.x, newPoint.y)
+        invalidate()
+    }
+
+    fun setSpeedUpload(speedData: SpeedData) {
+        arrSpeedUpload.add(speedData)
+        maxSpeedUpload = setMaxSpeedUpdate(speedData.speed)
+
+        if (isMaxStatusUpload) {
+            pathUpload.reset()
+            newPoint = PointF(0f, height.toFloat())
+            prevPoint = PointF(0f, height.toFloat())
+            pathUpload.moveTo(newPoint.x, newPoint.y)
+            for (item in arrSpeedUpload) {
+                setUpUpload(item)
+            }
+            isMaxStatusUpload = false
+        } else {
+            setUpUpload(speedData)
         }
+    }
 
-    override fun onSizeChanged(w: Int, h: Int, oldw: Int, oldh: Int) {  // khi view thay doi size thi se goi vao ham nay
-        super.onSizeChanged(w, h, oldw, oldh)
+    fun setUpUpload(speedData: SpeedData) {
+        prevPoint = newPoint
+        newPoint = PointF(speedData.percent * width / 100, height - (speedData.speed * height / maxSpeedUpload).toFloat())
+        middlePointUnder = PointF((prevPoint.x + newPoint.x) / 2, prevPoint.y)
+        middlePointAbove = PointF((prevPoint.x + newPoint.x) / 2, newPoint.y)
+        pathUpload.cubicTo(middlePointUnder.x, middlePointUnder.y, middlePointAbove.x, middlePointAbove.y, newPoint.x, newPoint.y)
+        invalidate()
+    }
 
-        Log.d(TAG, "onSizeChanged: w: $h oldHeight : $oldh")
+    fun setMaxSpeedDownload(speed: Int): Int {
+        if (maxSpeedDownload < speed) {
+            isMaxStatusDownload = true
+            return speed
+        }
+        return maxSpeedDownload
+    }
 
+    fun setMaxSpeedUpdate(speed: Int): Int {
+        if (maxSpeedUpload < speed) {
+            isMaxStatusUpload = true
+            return speed
+        }
+        return maxSpeedUpload
     }
 
     override fun onDraw(canvas: Canvas?) {
         super.onDraw(canvas)
+        canvas?.drawPath(pathDownload, linePaintDownload)
+        canvas?.drawPath(pathUpload, linePaintUpload)
 
-        canvas?.drawPath(path, linePaint)
-        canvas?.drawPath(path2, linePaint2)
-
-        canvas?.drawLine(100f + progress * width / 100, newY, width.toFloat(), newY, linePaint1)
-        canvas?.drawLine(100f + progress2 * width / 100, newY2, width.toFloat(), newY2, linePaint3)
-
+        canvas?.drawLine(newPoint.x, newPoint.y, width.toFloat(), newPoint.y, linePaintDownloadEnd)
+        canvas?.drawLine(newPoint.x, newPoint.y, width.toFloat(), newPoint.y, linePaintUploadEnd)
     }
 }

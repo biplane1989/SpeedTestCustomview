@@ -5,38 +5,124 @@ import android.os.Bundle
 import android.util.Log
 import android.view.animation.AccelerateDecelerateInterpolator
 import android.view.animation.AccelerateInterpolator
-import android.view.animation.CycleInterpolator
-import android.view.animation.LinearInterpolator
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.animation.doOnEnd
 import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.coroutines.*
-import kotlin.math.roundToInt
+import java.util.*
 
 class MainActivity : AppCompatActivity() {
     private var valueAnimator: ValueAnimator? = null
     var end = false
 
+    //    val speedData : SpeedData
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
-        var count = 0
-        var count2 = 0
-        MainScope().launch {
-            while (count < 100) {
-                delay(100)
-                line_demo.progress = count.toFloat()
-                count++
-            }
-            while (count2 < 100) {
-                delay(100)
-                line_demo.progress2 = count2.toFloat()
-                count2++
-            }
-        }
-        startAnimation(80, 100)
+        val random = Random()
 
+
+        MainScope().launch {
+            for (i in 1 until 100) {
+                Log.d("TAG", "onCreate: random ${random.nextFloat()}")
+                delay(100)
+
+                val speedData = SpeedData()
+
+                speedData.speed = 1
+                if (i > 10) {
+                    speedData.speed = random.nextInt(2 - 1 + 1) + 1
+//                    speedData.speed = 2
+                }
+                if (i > 20) {
+//                    speedData.speed = random.nextInt(3 - 2 + 1) + 2
+                    speedData.speed = 3
+                }
+                if (i > 30) {
+                    speedData.speed = random.nextInt(4 - 3 + 1) + 3
+//                    speedData.speed = 4
+                }
+                if (i > 40) {
+//                    speedData.speed = random.nextInt(5 - 4 + 1) + 4
+                    speedData.speed = 5
+                }
+                if (i > 50) {
+//                    speedData.speed = random.nextInt(6 - 5 + 1) + 5
+                    speedData.speed = 6
+                }
+                if (i > 60) {
+                    speedData.speed = random.nextInt(7 - 6 + 1) + 6
+//                    speedData.speed = 7
+                }
+                if (i > 70) {
+                    speedData.speed = random.nextInt(8 - 7 + 1) + 7
+//                    speedData.speed = 8
+                }
+                if (i > 80) {
+//                    speedData.speed = random.nextInt(9 - 8 + 1) + 8
+                    speedData.speed = 9
+                }
+                if (i > 90) {
+                    speedData.speed = random.nextInt(10-9+1)+9
+//                    speedData.speed = 10
+                }
+
+                speedData.percent = i.toFloat()
+                line_demo.setSpeedDownload(speedData)
+                Log.d("TAG", "onCreate: speedData : ${speedData}")
+            }
+
+            for (i in 1 until 100) {
+                Log.d("TAG", "onCreate: random ${random.nextFloat()}")
+                delay(100)
+
+                val speedData = SpeedData()
+
+                speedData.speed = 1
+                if (i > 10) {
+                    speedData.speed = random.nextInt(2 - 1 + 1) + 1
+//                    speedData.speed = 2
+                }
+                if (i > 20) {
+                    speedData.speed = random.nextInt(3 - 2 + 1) + 2
+//                    speedData.speed = 3
+                }
+                if (i > 30) {
+//                    speedData.speed = random.nextInt(4 - 3 + 1) + 3
+                    speedData.speed = 4
+                }
+                if (i > 40) {
+                    speedData.speed = random.nextInt(5 - 4 + 1) + 4
+//                    speedData.speed = 5
+                }
+                if (i > 50) {
+//                    speedData.speed = random.nextInt(6 - 5 + 1) + 5
+                    speedData.speed = 6
+                }
+                if (i > 60) {
+//                    speedData.speed = random.nextInt(7 - 6 + 1) + 6
+                    speedData.speed = 7
+                }
+                if (i > 70) {
+                    speedData.speed = random.nextInt(8 - 7 + 1) + 7
+//                    speedData.speed = 8
+                }
+                if (i > 80) {
+                    speedData.speed = random.nextInt(9 - 8 + 1) + 8
+//                    speedData.speed = 9
+                }
+                if (i > 90) {
+                    speedData.speed = random.nextInt(10-9+1)+9
+//                    speedData.speed = 10
+                }
+
+                speedData.percent = i.toFloat()
+                line_demo.setSpeedUpload(speedData)
+                Log.d("TAG", "onCreate: speedData : ${speedData}")
+            }
+
+        }
     }
 
     private fun startAnimation(oldValue: Int, endValue: Int) {
