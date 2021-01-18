@@ -13,58 +13,35 @@ class SpeedTest @JvmOverloads constructor(context: Context, attrs: AttributeSet?
     private val lineWidthEnd = 1f
     private val pathDownload = Path()
     private val pathUpload = Path()
+    private val TAG = "123"
 
-    var maxSpeedDownload = -1
-    var isMaxStatusDownload = false
+    private var maxSpeedDownload = -1
+    private var isMaxStatusDownload = false
 
-    var maxSpeedUpload = -1
-    var isMaxStatusUpload = false
+    private var maxSpeedUpload = -1
+    private var isMaxStatusUpload = false
 
-    var middlePointAbove = PointF()
-    var middlePointUnder = PointF()
-    var newPoint = PointF(0f, height.toFloat())
-    var prevPoint = PointF(0f, height.toFloat())
-    val arrSpeedDownload: ArrayList<SpeedData>
-    val arrSpeedUpload: ArrayList<SpeedData>
+    private var middlePointAbove = PointF()
+    private var middlePointUnder = PointF()
+    private var newPoint = PointF(0f, height.toFloat())
+    private var prevPoint = PointF(0f, height.toFloat())
+    private val arrSpeedDownload: ArrayList<SpeedData>
+    private val arrSpeedUpload: ArrayList<SpeedData>
 
     init {
         arrSpeedDownload = ArrayList()
         arrSpeedUpload = ArrayList()
-
         pathDownload.moveTo(newPoint.x, newPoint.y)
     }
 
-    val TAG = "123"
-    private val linePaintDownload = Paint().apply {
+    override fun onDraw(canvas: Canvas?) {
+        super.onDraw(canvas)
+        canvas?.drawPath(pathDownload, linePaintDownload)
+        canvas?.drawPath(pathUpload, linePaintUpload)
 
-        color = Color.parseColor("#FFA723")
-        style = Paint.Style.STROKE
-        strokeWidth = lineWidth
-        isAntiAlias = true
+        canvas?.drawLine(newPoint.x, newPoint.y, width.toFloat(), newPoint.y, linePaintDownloadEnd)
+        canvas?.drawLine(newPoint.x, newPoint.y, width.toFloat(), newPoint.y, linePaintUploadEnd)
     }
-
-    private val linePaintDownloadEnd = Paint().apply {
-        color = Color.parseColor("#FFA723")
-        style = Paint.Style.STROKE
-        strokeWidth = lineWidthEnd
-        isAntiAlias = true
-    }
-
-    private val linePaintUpload = Paint().apply {
-
-        color = Color.parseColor("#5EC7D3")
-        style = Paint.Style.STROKE
-        strokeWidth = lineWidth
-        isAntiAlias = true
-    }
-
-    private val linePaintUploadEnd = Paint().apply {
-        color = Color.parseColor("#5EC7D3")
-        style = Paint.Style.STROKE
-        strokeWidth = lineWidthEnd
-        isAntiAlias = true
-    }
-
 
     fun setSpeedDownload(speedData: SpeedData) {
         arrSpeedDownload.add(speedData)
@@ -120,7 +97,7 @@ class SpeedTest @JvmOverloads constructor(context: Context, attrs: AttributeSet?
         invalidate()
     }
 
-    fun setMaxSpeedDownload(speed: Int): Int {
+    private fun setMaxSpeedDownload(speed: Int): Int {
         if (maxSpeedDownload < speed) {
             isMaxStatusDownload = true
             return speed
@@ -128,7 +105,7 @@ class SpeedTest @JvmOverloads constructor(context: Context, attrs: AttributeSet?
         return maxSpeedDownload
     }
 
-    fun setMaxSpeedUpdate(speed: Int): Int {
+    private fun setMaxSpeedUpdate(speed: Int): Int {
         if (maxSpeedUpload < speed) {
             isMaxStatusUpload = true
             return speed
@@ -136,12 +113,33 @@ class SpeedTest @JvmOverloads constructor(context: Context, attrs: AttributeSet?
         return maxSpeedUpload
     }
 
-    override fun onDraw(canvas: Canvas?) {
-        super.onDraw(canvas)
-        canvas?.drawPath(pathDownload, linePaintDownload)
-        canvas?.drawPath(pathUpload, linePaintUpload)
+    private val linePaintDownload = Paint().apply {
 
-        canvas?.drawLine(newPoint.x, newPoint.y, width.toFloat(), newPoint.y, linePaintDownloadEnd)
-        canvas?.drawLine(newPoint.x, newPoint.y, width.toFloat(), newPoint.y, linePaintUploadEnd)
+        color = Color.parseColor("#FFA723")
+        style = Paint.Style.STROKE
+        strokeWidth = lineWidth
+        isAntiAlias = true
+    }
+
+    private val linePaintDownloadEnd = Paint().apply {
+        color = Color.parseColor("#FFA723")
+        style = Paint.Style.STROKE
+        strokeWidth = lineWidthEnd
+        isAntiAlias = true
+    }
+
+    private val linePaintUpload = Paint().apply {
+
+        color = Color.parseColor("#5EC7D3")
+        style = Paint.Style.STROKE
+        strokeWidth = lineWidth
+        isAntiAlias = true
+    }
+
+    private val linePaintUploadEnd = Paint().apply {
+        color = Color.parseColor("#5EC7D3")
+        style = Paint.Style.STROKE
+        strokeWidth = lineWidthEnd
+        isAntiAlias = true
     }
 }
